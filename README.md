@@ -69,23 +69,49 @@ Run the server executable, making sure to accept the license:
 tsserver.exe
 ```
 
-<h2><img width="32" src="/icons/docker.svg">&nbsp;Running the Server with Docker (Recommended):</h2>
-Docker is the easiest way to run the TeamSpeak 6 server in an isolated and manageable environment.
+<h2><img width="32" src="/icons/docker.svg" alt="Docker">&nbsp;Run the Server with Docker (Recommended)</h2>
+<p>
+  The easiest way to run the TeamSpeak 6 Server is with 
+  <a href="https://docs.docker.com/engine/install/">Docker</a>.  
+  It provides an isolated, portable, and easily manageable environment, 
+  making setup and maintenance straightforward.
+</p>
 
 ### 1. Simple docker run command:
 
 For a quick start, you can use the docker run command.
 
 ```sh
-docker run -it --rm \
+# Running the TeamSpeak 6 Server container in detached mode using a docker volume
+docker run -d \
+  --name teamspeak-server \
   -p 9987:9987/udp \
   -p 30033:30033 \
   -e TSSERVER_LICENSE_ACCEPTED=accept \
+  -v teamspeak-data:/var/tsserver/ \
   teamspeaksystems/teamspeak6-server:latest
+
+# Check server logs (e.g. ServerAdmin privilege key)
+docker logs -f teamspeak-server
+
+# Manage the container
+docker stop teamspeak-server    # Stop the server
+docker start teamspeak-server   # Start it again
+docker restart teamspeak-server # Restart in one step
+
+# Clean up
+docker rm -f teamspeak-server   # Remove the container (data is kept in the volume)
+docker volume rm teamspeak-data # Remove the data volume (permanently deletes all server data!)
+
 ```
 
-### 2. Using docker-compose.yaml (for persistent setups):
-This is the best practice for a server you intend to keep running. Create a docker-compose.yaml file:
+### 2. Using docker-compose.yaml (for more persistent setups):
+For a server you intend to keep running long-term, it’s recommended to use Docker Compose instead of docker run.
+
+Create a docker-compose.yaml file in your project directory.
+
+You can use the following minimal example, or explore the ready-made configurations in the `compose/`
+folder (e.g. example-compose-mariadb.yaml):
 
 ```yaml
 services:
@@ -100,11 +126,30 @@ services:
     environment:
       - TSSERVER_LICENSE_ACCEPTED=accept
     volumes:
-      - teamspeak-data:/var/tsserver/
+      - teamspeak-data:/var/tsserver
 
 volumes:
   teamspeak-data:
+    name: teamspeak-data
 ```
+Common Docker Compose Commands: 
+```sh
+# Running the server in detached mode using the example compose file
+docker compose -f example-compose-sqlite.yaml up -d
+
+# Check server logs (e.g. ServerAdmin privilege key)
+docker compose -f example-compose-sqlite.yaml logs -f
+
+# Manage the compose
+docker compose -f example-compose-sqlite.yaml stop     # Stop the server
+docker compose -f example-compose-sqlite.yaml start    # Start it again
+docker compose -f example-compose-sqlite.yaml restart  # Restart in one step
+
+# Clean up
+docker compose -f example-compose-sqlite.yaml down     # Remove the container (data is kept in the volume)
+docker volume rm teamspeak-data                        # Remove the data volume (permanently deletes all server data!)
+```
+
 
 ## 🔗 Useful Links
 [Official Website](https://teamspeak.com/en/)<br>

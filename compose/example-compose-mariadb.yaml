@@ -26,7 +26,7 @@ services:
       - TSSERVER_DATABASE_USERNAME=teamspeak
       - TSSERVER_DATABASE_PASSWORD=YourPasswordHere
     volumes:
-      - tsserver-data:/var/tsserver
+      - teamspeak-data:/var/tsserver
     depends_on:
       mariadb:
         condition: service_healthy
@@ -50,7 +50,7 @@ services:
       retries: 3
 
 volumes:
-  tsserver-data:
-    name: tsserver-data
+  teamspeak-data:
+    name: teamspeak-data
   mariadb-data:
     name: mariadb-data

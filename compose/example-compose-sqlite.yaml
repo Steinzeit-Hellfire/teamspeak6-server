@@ -20,8 +20,8 @@ services:
       # - TSSERVER_LOG_PATH=/var/tsserver/logs
       # - TSSERVER_QUERY_ADMIN_PASSWORD=secretpassword
     volumes:
-      - tsserver-data:/var/tsserver
+      - teamspeak-data:/var/tsserver
 
 volumes:
-  tsserver-data:
-    name: tsserver-data
+  teamspeak-data:
+    name: teamspeak-data
